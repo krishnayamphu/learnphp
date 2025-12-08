@@ -28,6 +28,7 @@ $result = mysqli_query($conn, $sql);
 
 
     <div class="container mt-5">
+        <a class="btn btn-secondary" href="user-add.php">Add User</a>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -49,8 +50,12 @@ $result = mysqli_query($conn, $sql);
                             <td><?php echo $row["password"] ?></td>
                             <td>
                                 <div class="d-flex gap-2">
-                                    <a class="btn btn-primary" href="#">Edit</a>
-                                    <a class="btn btn-danger" href="#">Delete</a>
+                                    <a class="btn btn-primary" href="user-edit.php?id=<?php echo $row['id'] ?>">Edit</a>
+                                    <form action="delete.php" method="post">
+                                        <input type="hidden" name="id" value="<?php echo $row["id"] ?>">
+                                        <button class="btn btn-danger">Delete</button>
+                                    </form>
+
                                 </div>
                             </td>
                         </tr>
