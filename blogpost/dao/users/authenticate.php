@@ -2,22 +2,13 @@
 session_start();
 require "../../config/connect_db.php";
 
-$name = $email = $password = "";
+$email = $password = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
-    $name = valid_input($_POST['name']);
     $email = valid_input($_POST['email']);
     $password = valid_input($_POST['password']);
 
     $pattern = '/^[a-z0-9][a-z0-9_]{0,28}[a-z0-9]$/i';
-
-    if (empty($name)) {
-        $_SESSION['nameErr'] = "Name is required";
-    } else {
-        if (!preg_match($pattern, $name)) {
-            $_SESSION['nameErr'] = "Invalid name";
-        }
-    }
 
     if (empty($email)) {
         $_SESSION['emailErr'] = "Email is required";
@@ -32,12 +23,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     }
 
     $hash = sha1($password);
-    $sql = "INSERT INTO users (name,email,password) VALUES ('" . $name . "','" . $email . "','" . $hash . "')";
-    if (mysqli_query($conn, $sql)) {
+    $sql = "SELECT * FROM users WHERE email='" . $email . "' AND password='" . $hash . "'";
+    $result = mysqli_query($conn, $sql);
+    if (mysqli_num_rows($result) > 0) {
         $_SESSION['email'] = $email;
         header('location:../../admin/index.php');
     } else {
-        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+        $_SESSION['err'] = "Invalid email or password.";
+        header('location:../../auth/signin.php');
     }
 }
 
