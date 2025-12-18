@@ -2,11 +2,11 @@
 require "../../filters/authFilter.php";
 require "../../config/connect_db.php";
 require "../../dao/category_functions.php";
-require "../../dao/category_functions.php";
 require "../../dao/post_functions.php";
 
 $categories = getCategories($conn);
 $posts = getPosts($conn);
+
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <td class="d-flex gap-2">
                                         <a class="btn btn-success" href="edit.php?id=<?= $row['id'] ?>">Edit</a>
 
-                                        <form method="post" onsubmit="return confirm('Delete this category?');">
+                                        <form method="post" onsubmit="return confirm('Delete this post?');">
                                             <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                             <button class="btn btn-danger">Delete</button>
                                         </form>

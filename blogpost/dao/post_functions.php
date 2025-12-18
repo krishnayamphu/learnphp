@@ -25,7 +25,7 @@ function getPost(mysqli $conn, int $id): ?array
     return null;
 }
 
-function createPosts(
+function createPost(
     mysqli $conn,
     string $title,
     string $slug,

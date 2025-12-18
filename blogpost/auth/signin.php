@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         if (authenticate($conn, $email, $password)) {
-            header("Location: /admin/index.php");
+            header("Location:/learnphp/blogpost/admin/index.php");
             exit;
         } else {
             $errors['general'] = "Invalid email or password";

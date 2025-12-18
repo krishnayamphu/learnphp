@@ -4,9 +4,9 @@ require "../../config/connect_db.php";
 require "../../dao/category_functions.php";
 require "../../dao/post_functions.php";
 
-$id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+$postId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $categories = getCategories($conn);
-$post = getPost($conn, $id);
+$post = getPost($conn, $postId);
 
 if (!$post) {
     die('Post not found');
@@ -18,20 +18,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $title = trim($_POST['title'] ?? '');
     $slug = trim($_POST['slug'] ?? '');
-    $conent = trim($_POST['content'] ?? '');
-    $thumbnail = trim($_POST['thumbnail'] ?? '');
-    $categoryId = trim($_POST['category_id'] ?? '');
+    $content   = trim($_POST['content'] ?? '');
+    $thumbnail = trim($_POST['thumbnail'] ?? 'default.jpg');
+    $categoryId = (int) ($_POST['category_id'] ?? 0);
 
     if ($title === '') {
         $errors['title'] = 'Title is required';
-    } elseif (!preg_match('/^[a-z0-9][a-z0-9_]{0,28}[a-z0-9]$/i', $title)) {
-        $errors['title'] = 'Invalid title format';
+    } elseif (strlen($title) < 3) {
+        $errors['title'] = 'Title must be at least 3 characters';
     }
 
     if ($slug === '') {
         $errors['slug'] = 'Slug is required';
     } elseif (!preg_match('~^[a-z0-9-]+$~', $slug)) {
         $errors['slug'] = 'Invalid slug format';
+    }
+
+    if ($categoryId <= 0) {
+        $errors['categoryId'] = 'Category is required';
     }
 
     if (empty($errors)) {
@@ -50,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Category Details</title>
+    <title>Post Details</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 
@@ -64,36 +68,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="d-flex">
                     <ul class="nav nav-pills">
                         <li class="nav-item">
-                            <a class="nav-link disabled" aria-disabled="true">Category Details</a>
+                            <a class="nav-link disabled" aria-disabled="true">Post Details</a>
                         </li>
                     </ul>
-                    <a class="btn btn-secondary" href="/learnphp/blogpost/admin/postes">All Posts</a>
+                    <a class="btn btn-secondary" href="/learnphp/blogpost/admin/posts">All Posts</a>
                 </div>
                 <hr>
                 <form method="POST">
+                    <?php if (!empty($errors['general'])): ?>
+                        <div class="alert alert-danger">
+                            <?= $errors['general'] ?>
+                        </div>
+                    <?php endif; ?>
+
                     <div class="mb-3">
-                        <label class="form-label">Title</label>
-                        <input type="text"
-                            name="title"
-                            class="form-control"
-                            value="<?= htmlspecialchars($category['title'], ENT_QUOTES) ?>">
+                        <label>Title</label>
+                        <input type="text" name="title" class="form-control"
+                            value="<?= htmlspecialchars($post['title']) ?>">
                         <?php if (!empty($errors['title'])): ?>
                             <small class="text-danger"><?= $errors['title'] ?></small>
                         <?php endif; ?>
                     </div>
+
                     <div class="mb-3">
-                        <label class="form-label">Slug</label>
-                        <input type="text"
-                            name="slug"
-                            class="form-control"
-                            value="<?= htmlspecialchars($category['slug'], ENT_QUOTES) ?>">
+                        <label>Slug</label>
+                        <input type="text" name="slug" class="form-control"
+                            value="<?= htmlspecialchars($post['slug']) ?>">
                         <?php if (!empty($errors['slug'])): ?>
                             <small class="text-danger"><?= $errors['slug'] ?></small>
                         <?php endif; ?>
                     </div>
+
                     <div class="mb-3">
-                        <label class="form-label">Category</label>
-                        <select name="category_id" class="form-select" required>
+                        <label>Category</label>
+                        <select name="category_id" class="form-select">
                             <option value="">-- Select Category --</option>
 
                             <?php foreach ($categories as $category): ?>
@@ -103,21 +111,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </option>
                             <?php endforeach; ?>
                         </select>
+
+                        <?php if (!empty($errors['categoryId'])): ?>
+                            <small class="text-danger"><?= $errors['categoryId'] ?></small>
+                        <?php endif; ?>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Content</label>
-                        <textarea name="content"
-                            class="form-control"><?= htmlspecialchars($category['content'], ENT_QUOTES) ?></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Thumbnail</label>
-                        <input type="text"
-                            name="thumbnail"
-                            class="form-control" value="default.jpg">
+                        <label>Content</label>
+                        <textarea name="content" class="form-control"><?= htmlspecialchars($post['content']) ?></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Update Post</button>
+                    <div class="mb-3">
+                        <label>Thumbnail</label>
+                        <input type="text" name="thumbnail" class="form-control"
+                            value="<?= htmlspecialchars($post['thumbnail']) ?>">
+                    </div>
+
+                    <button class="btn btn-primary">Update Post</button>
                 </form>
 
             </div>
