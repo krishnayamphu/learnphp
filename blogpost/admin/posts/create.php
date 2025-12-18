@@ -1,13 +1,15 @@
 <?php
 require "../../filters/authFilter.php";
 require "../../config/connect_db.php";
-require "../../dao/category_functions.php";
+// require "../../dao/category_functions.php";
+require "../../dao/post_functions.php";
 
+// $categories = getCategories($conn);
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $name = trim($_POST['name'] ?? '');
+    $title = trim($_POST['name'] ?? '');
     $slug = trim($_POST['slug'] ?? '');
     $description = trim($_POST['description'] ?? '');
 
@@ -24,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        if (createCategory($conn, $name, $slug, $description)) {
+        if (createPost($conn, $name, $slug, $description)) {
             header("Location: index.php");
             exit;
         } else {
@@ -39,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Add Category</title>
+    <title>Add Post</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 
@@ -53,20 +55,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="d-flex">
                     <ul class="nav nav-pills">
                         <li class="nav-item">
-                            <a class="nav-link disabled" aria-disabled="true">Category Details</a>
+                            <a class="nav-link disabled" aria-disabled="true">Post Details</a>
                         </li>
                     </ul>
-                    <a class="btn btn-secondary" href="/learnphp/blogpost/admin/category">All Categories</a>
+                    <a class="btn btn-secondary" href="/learnphp/blogpost/admin/category">All Posts</a>
                 </div>
                 <hr>
                 <form method="POST">
                     <div class="mb-3">
-                        <label class="form-label">Name</label>
+                        <label class="form-label">Title</label>
                         <input type="text"
-                            name="name"
+                            name="title"
                             class="form-control">
-                        <?php if (!empty($errors['name'])): ?>
-                            <small class="text-danger"><?= $errors['name'] ?></small>
+                        <?php if (!empty($errors['title'])): ?>
+                            <small class="text-danger"><?= $errors['title'] ?></small>
                         <?php endif; ?>
                     </div>
                     <div class="mb-3">
@@ -78,14 +80,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <small class="text-danger"><?= $errors['slug'] ?></small>
                         <?php endif; ?>
                     </div>
-
                     <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <textarea name="description"
-                            class="form-control"></textarea>
+                        <label class="form-label">Category</label>
+                        <select name="category_id" class="form-select" required>
+                            <option value="">-- Select Category --</option>
+
+                            <!-- <?php foreach ($categories as $category): ?>
+                                <option value="<?= $category['id'] ?>">
+                                    <?= $category['name'] ?>
+                                </option>
+                            <?php endforeach; ?> -->
+                        </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Create Category</button>
+                    <div class="mb-3">
+                        <label class="form-label">Content</label>
+                        <textarea name="content"
+                            class="form-control"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Thumbnail</label>
+                        <input type="text"
+                            name="thumbnail"
+                            class="form-control" value="default.jpg">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Create Post</button>
                 </form>
             </div>
         </div>

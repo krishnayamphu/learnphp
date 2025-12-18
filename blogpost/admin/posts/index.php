@@ -2,9 +2,11 @@
 require "../../filters/authFilter.php";
 require "../../config/connect_db.php";
 require "../../dao/category_functions.php";
+require "../../dao/category_functions.php";
+require "../../dao/post_functions.php";
+
 $categories = getCategories($conn);
-
-
+$posts = getPosts($conn);
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,11 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['id'] = 'Invalid category ID';
     }
     if (empty($errors)) {
-        if (deleteCategory($conn, $id)) {
+        if (deletePost($conn, $id)) {
             header("Location: index.php");
             exit;
         } else {
-            $errors['general'] = 'Failed to delete category';
+            $errors['general'] = 'Failed to delete post';
         }
     }
 }
@@ -41,10 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="col-lg-10 p-4">
                 <ul class="nav nav-pills">
                     <li class="nav-item">
-                        <a class="nav-link disabled" aria-disabled="true">All Categories</a>
+                        <a class="nav-link disabled" aria-disabled="true">All Posts</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/learnphp/blogpost/admin/category/create.php">Add Category</a>
+                        <a class="nav-link active" aria-current="page" href="/learnphp/blogpost/admin/posts/create.php">Add Post</a>
                     </li>
                 </ul>
                 <hr>
@@ -52,23 +54,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <thead>
                         <tr>
                             <th scope="col">#SN</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Slug</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Category</th>
                             <th scope="col">Action</th>
                         </tr>
 
                     </thead>
                     <tbody>
-                        <?php if (empty($categories)): ?>
+                        <?php if (empty($posts)): ?>
                             <tr>
-                                <td colspan="4" class="text-center">No categories found</td>
+                                <td colspan="4" class="text-center">No posts found</td>
                             </tr>
                             <?php else:
                             $sn = 1;
-                            foreach ($categories as $row): ?>
+                            foreach ($posts as $row): ?>
                                 <tr>
                                     <td><?= $sn++ ?></td>
-                                    <td><?= htmlspecialchars($row['name'], ENT_QUOTES) ?></td>
+                                    <td><?= htmlspecialchars($row['title'], ENT_QUOTES) ?></td>
                                     <td><?= htmlspecialchars($row['slug'], ENT_QUOTES) ?></td>
                                     <td class="d-flex gap-2">
                                         <a class="btn btn-success" href="edit.php?id=<?= $row['id'] ?>">Edit</a>

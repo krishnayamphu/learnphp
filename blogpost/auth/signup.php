@@ -1,10 +1,59 @@
+<?php
+session_start();
+require "../config/connect_db.php";
+require "../dao/user_functions.php";
+
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $name     = trim($_POST['name'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+
+    // Name validation
+    if ($name === '') {
+        $errors['name'] = 'Name is required';
+    } elseif (!preg_match('/^[a-z0-9][a-z0-9_]{0,28}[a-z0-9]$/i', $name)) {
+        $errors['name'] = 'Invalid name format';
+    }
+
+    // Email validation
+    if ($email === '') {
+        $errors['email'] = 'Email is required';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Invalid email format';
+    }
+
+    // Password validation
+    if ($password === '') {
+        $errors['password'] = 'Password is required';
+    } elseif (strlen($password) < 6) {
+        $errors['password'] = 'Password must be at least 6 characters';
+    }
+
+    // Register user
+    if (empty($errors)) {
+        if (registerUser($conn, $name, $email, $password)) {
+
+            session_regenerate_id(true);
+            $_SESSION['email'] = $email;
+
+            header("Location: /admin/index.php");
+            exit;
+        } else {
+            $errors['general'] = 'Registration failed (email may already exist)';
+        }
+    }
+}
+?>
 <!doctype html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Media Files</title>
+    <title>Sign Up</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 
@@ -13,20 +62,41 @@
         <div class="row justify-content-center">
             <div class="col-lg-6">
                 <h3>Sign Up</h3>
-                <form action="../dao/users/register.php" method="post">
+                <form method="post">
+
+                    <?php if (!empty($errors['general'])): ?>
+                        <div class="alert alert-danger">
+                            <?= $errors['general'] ?>
+                        </div>
+                    <?php endif; ?>
+
                     <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
+                        <label>Name</label>
+                        <input type="text" name="name" class="form-control"
+                            value="<?= htmlspecialchars($name ?? '') ?>">
+                        <?php if (!empty($errors['name'])): ?>
+                            <small class="text-danger"><?= $errors['name'] ?></small>
+                        <?php endif; ?>
                     </div>
+
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email address</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control"
+                            value="<?= htmlspecialchars($email ?? '') ?>">
+                        <?php if (!empty($errors['email'])): ?>
+                            <small class="text-danger"><?= $errors['email'] ?></small>
+                        <?php endif; ?>
                     </div>
+
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <label>Password</label>
+                        <input type="password" name="password" class="form-control">
+                        <?php if (!empty($errors['password'])): ?>
+                            <small class="text-danger"><?= $errors['password'] ?></small>
+                        <?php endif; ?>
                     </div>
-                    <button type="submit" class="btn btn-primary" name="submit">Sign Up</button>
+
+                    <button class="btn btn-primary">Sign Up</button>
                 </form>
             </div>
         </div>

@@ -2,26 +2,30 @@
 require "../../filters/authFilter.php";
 require "../../config/connect_db.php";
 require "../../dao/category_functions.php";
+require "../../dao/post_functions.php";
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
-$category = getCategory($conn, $id);
+$categories = getCategories($conn);
+$post = getPost($conn, $id);
 
-if (!$category) {
-    die('Category not found');
+if (!$post) {
+    die('Post not found');
 }
 
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $name = trim($_POST['name'] ?? '');
+    $title = trim($_POST['title'] ?? '');
     $slug = trim($_POST['slug'] ?? '');
-    $description = trim($_POST['description'] ?? '');
+    $conent = trim($_POST['content'] ?? '');
+    $thumbnail = trim($_POST['thumbnail'] ?? '');
+    $categoryId = trim($_POST['category_id'] ?? '');
 
-    if ($name === '') {
-        $errors['name'] = 'Name is required';
-    } elseif (!preg_match('/^[a-z0-9][a-z0-9_]{0,28}[a-z0-9]$/i', $name)) {
-        $errors['name'] = 'Invalid name format';
+    if ($title === '') {
+        $errors['title'] = 'Title is required';
+    } elseif (!preg_match('/^[a-z0-9][a-z0-9_]{0,28}[a-z0-9]$/i', $title)) {
+        $errors['title'] = 'Invalid title format';
     }
 
     if ($slug === '') {
@@ -31,11 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        if (updateCategory($conn, $id, $name, $slug, $description)) {
+        if (updatePost($conn, $postId, $title, $slug, $content, $thumbnail, $categoryId)) {
             header("Location: index.php");
             exit;
         } else {
-            $errors['general'] = 'Failed to update category';
+            $errors['general'] = 'Failed to update post';
         }
     }
 }
@@ -63,18 +67,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <a class="nav-link disabled" aria-disabled="true">Category Details</a>
                         </li>
                     </ul>
-                    <a class="btn btn-secondary" href="/learnphp/blogpost/admin/category">All Categories</a>
+                    <a class="btn btn-secondary" href="/learnphp/blogpost/admin/postes">All Posts</a>
                 </div>
                 <hr>
                 <form method="POST">
                     <div class="mb-3">
-                        <label class="form-label">Name</label>
+                        <label class="form-label">Title</label>
                         <input type="text"
-                            name="name"
+                            name="title"
                             class="form-control"
-                            value="<?= htmlspecialchars($category['name'], ENT_QUOTES) ?>">
-                        <?php if (!empty($errors['name'])): ?>
-                            <small class="text-danger"><?= $errors['name'] ?></small>
+                            value="<?= htmlspecialchars($category['title'], ENT_QUOTES) ?>">
+                        <?php if (!empty($errors['title'])): ?>
+                            <small class="text-danger"><?= $errors['title'] ?></small>
                         <?php endif; ?>
                     </div>
                     <div class="mb-3">
@@ -87,14 +91,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <small class="text-danger"><?= $errors['slug'] ?></small>
                         <?php endif; ?>
                     </div>
-
                     <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <textarea name="description"
-                            class="form-control"><?= htmlspecialchars($category['description'], ENT_QUOTES) ?></textarea>
+                        <label class="form-label">Category</label>
+                        <select name="category_id" class="form-select" required>
+                            <option value="">-- Select Category --</option>
+
+                            <?php foreach ($categories as $category): ?>
+                                <option value="<?= $category['id'] ?>"
+                                    <?= ($category['id'] == $post['category_id']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($category['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Update Category</button>
+                    <div class="mb-3">
+                        <label class="form-label">Content</label>
+                        <textarea name="content"
+                            class="form-control"><?= htmlspecialchars($category['content'], ENT_QUOTES) ?></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Thumbnail</label>
+                        <input type="text"
+                            name="thumbnail"
+                            class="form-control" value="default.jpg">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Update Post</button>
                 </form>
 
             </div>

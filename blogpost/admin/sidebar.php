@@ -1,9 +1,9 @@
-<ul class="nav flex-column">
+<ul class="nav flex-column bg-white">
     <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="/learnphp/blogpost/admin/">Dashboard</a>
+        <a class="nav-link text-secondary" aria-current="page" href="/learnphp/blogpost/admin/">Dashboard</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">Media Files</a>
+        <a class="nav-link text-secondary" href="#">Media Files</a>
     </li>
 </ul>
 <div class="accordion accordion-flush" id="accordionFlushExample">
@@ -17,10 +17,10 @@
             <div class="accordion-body">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">All Posts</a>
+                        <a class="nav-link active" aria-current="page" href="/learnphp/blogpost/admin/posts">All Posts</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Add Post</a>
+                        <a class="nav-link" href="/learnphp/blogpost/admin/posts/create.php">Add Post</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/learnphp/blogpost/admin/category">Categories</a>

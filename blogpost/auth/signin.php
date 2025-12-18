@@ -1,7 +1,39 @@
-<?php session_start();
-if (isset($_SESSION['email'])) {
-    header('location:../admin/index.php');
-    exit();
+<?php
+session_start();
+
+require "../config/connect_db.php";
+require "../dao/user_functions.php";
+
+if (isset($_SESSION['user_id'])) {
+    header("Location: /learnphp/blogpost/admin/index.php");
+    exit;
+}
+
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $email    = trim($_POST['email'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+
+    if ($email === '') {
+        $errors['email'] = 'Email is required';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Invalid email format';
+    }
+
+    if ($password === '') {
+        $errors['password'] = 'Password is required';
+    }
+
+    if (empty($errors)) {
+        if (authenticate($conn, $email, $password)) {
+            header("Location: /admin/index.php");
+            exit;
+        } else {
+            $errors['general'] = "Invalid email or password";
+        }
+    }
 }
 ?>
 <!doctype html>
@@ -19,26 +51,33 @@ if (isset($_SESSION['email'])) {
         <div class="row justify-content-center">
             <div class="col-lg-6">
                 <h3>Sign In</h3>
-                <form action="../dao/users/authenticate.php" method="post">
-                    <?php
-                    if (isset($_SESSION['err'])) { ?>
-                        <div class="alert alert-danger" role="alert">
-                            <?php echo $_SESSION['err']; ?>
+                <form method="post">
+                    <?php if (!empty($errors['general'])): ?>
+                        <div class="alert alert-danger">
+                            <?= $errors['general'] ?>
                         </div>
-                    <?php
-                        session_unset();
-                    }
-                    ?>
+                    <?php endif; ?>
+
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email address</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control"
+                            value="<?= htmlspecialchars($email ?? '') ?>">
+                        <?php if (!empty($errors['email'])): ?>
+                            <small class="text-danger"><?= $errors['email'] ?></small>
+                        <?php endif; ?>
                     </div>
+
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <label>Password</label>
+                        <input type="password" name="password" class="form-control">
+                        <?php if (!empty($errors['password'])): ?>
+                            <small class="text-danger"><?= $errors['password'] ?></small>
+                        <?php endif; ?>
                     </div>
-                    <button type="submit" class="btn btn-primary" name="submit">Sign In</button>
+
+                    <button class="btn btn-primary">Sign In</button>
                 </form>
+
             </div>
         </div>
     </div>
