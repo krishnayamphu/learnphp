@@ -1,9 +1,9 @@
 <ul class="nav flex-column bg-white">
     <li class="nav-item">
-        <a class="nav-link text-secondary" aria-current="page" href="/learnphp/blogpost/admin/">Dashboard</a>
+        <a class="nav-link text-dark" aria-current="page" href="/learnphp/blogpost/admin/">Dashboard</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-secondary" href="#">Media Files</a>
+        <a class="nav-link text-dark" href="/learnphp/blogpost/admin/media">Media Files</a>
     </li>
 </ul>
 <div class="accordion accordion-flush" id="accordionFlushExample">
