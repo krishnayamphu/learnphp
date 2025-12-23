@@ -30,39 +30,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['image'])) {
 
 <body>
     <div class="container-fluid">
-        <div class="row row-cols-1 row-cols-lg-6 g-4">
+        <div class="row">
+            <div class="col-lg-2 bg-info vh-100 py-4 px-2">
+                <?php include "../sidebar.php" ?>
+            </div>
 
-            <?php if (empty($files)): ?>
-                <div class="col-12">
-                    <div class="alert alert-warning text-center">
-                        No files found
+            <div class="col-lg-10 p-4">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link disabled" aria-disabled="true">All Media Files</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/learnphp/blogpost/admin/media/fileupload.php">Upload Image</a>
+                    </li>
+                </ul>
+                <hr>
+
+                <?php if (empty($files)): ?>
+                    <div class="col-12">
+                        <div class="alert alert-warning text-center">
+                            No files found
+                        </div>
                     </div>
-                </div>
-            <?php else: ?>
+                <?php else: ?>
+                    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-6 g-4 mb-4">
+                        <?php foreach ($files as $file):
+                            $fileName = basename($file);
+                        ?>
+                            <div class="col">
+                                <a href="<?= $uploadUrl . $fileName ?>" target="_blank">
+                                    <img src="<?= $uploadUrl . $fileName ?>" class="img-fluid rounded">
+                                </a>
 
-                <?php foreach ($files as $file):
-                    $fileName = basename($file);
-                ?>
-                    <div class="col">
-                        <a href="<?= $uploadUrl . $fileName ?>" target="_blank">
-                            <img src="<?= $uploadUrl . $fileName ?>" class="img-fluid rounded">
-                        </a>
+                                <form method="post">
+                                    <input type="hidden" name="image" value="<?= $fileName ?>">
+                                    <button class="btn btn-danger btn-sm mt-2" type="submit">
+                                        Remove
+                                    </button>
+                                </form>
+                            </div>
 
-                        <form method="post">
-                            <input type="hidden" name="image" value="<?= $fileName ?>">
-                            <button class="btn btn-danger btn-sm mt-2" type="submit">
-                                Remove
-                            </button>
-                        </form>
+                        <?php endforeach; ?>
                     </div>
-                <?php endforeach; ?>
 
-            <?php endif; ?>
-
+                <?php endif; ?>
+            </div>
         </div>
 
     </div>
-    <?php mysqli_close($conn) ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 

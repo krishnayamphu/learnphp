@@ -3,8 +3,9 @@ require "config/connect_db.php";
 require "dao/category_functions.php";
 require "dao/post_functions.php";
 $uploadUrl = "/learnphp/blogpost/admin/media/uploads/";
-$posts = getPosts($conn);
-
+$postId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+$categories = getCategories($conn);
+$post = getPost($conn, $postId);
 ?>
 <!doctype html>
 <html lang="en">
@@ -49,28 +50,21 @@ $posts = getPosts($conn);
 
     <main>
         <div class="container">
-            <?php if (count($posts) === 0) : ?>
+            <?php if (!$post) : ?>
                 <div class="alert alert-info mt-4">
                     No posts found.
                 </div>
 
             <?php else : ?>
-                <div class="d-flex flex-column gap-4 mt-4">
-                    <?php foreach ($posts as $post): ?>
-                        <div class="card">
-                            <div class="d-flex gap-4">
-                                <a href="single.php?id=<?= $post['id'] ?>"><img width="200" src="<?= $uploadUrl . $post['thumbnail'] ?>"></a>
-                                <h2><a href="single.php?id=<?= $post['id'] ?>"><?= $post['title'] ?></a></h2>
-                                <!-- <p><?= $post['content'] ?></p> -->
-                            </div>
-                        </div>
-
-                    <?php endforeach; ?>
+                <div class="card my-5 py-5 px-3">
+                    <div class="d-flex flex-column gap-4">
+                        <img class="w-100" src="<?= $uploadUrl . $post['thumbnail'] ?>">
+                        <h1><?= $post['title'] ?></h1>
+                        <p><?= $post['content'] ?></p>
+                    </div>
                 </div>
             <?php endif; ?>
-
         </div>
-
     </main>
 
     <?php mysqli_close($conn) ?>

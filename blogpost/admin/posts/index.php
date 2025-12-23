@@ -3,8 +3,7 @@ require "../../filters/authFilter.php";
 require "../../config/connect_db.php";
 require "../../dao/category_functions.php";
 require "../../dao/post_functions.php";
-
-$categories = getCategories($conn);
+$uploadUrl = "/learnphp/blogpost/admin/media/uploads/";
 $posts = getPosts($conn);
 
 $errors = [];
@@ -56,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <th scope="col">#SN</th>
                             <th scope="col">Title</th>
                             <th scope="col">Category</th>
+                            <th scope="col">Thumbnail</th>
                             <th scope="col">Action</th>
                         </tr>
 
@@ -71,7 +71,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <tr>
                                     <td><?= $sn++ ?></td>
                                     <td><?= htmlspecialchars($row['title'], ENT_QUOTES) ?></td>
-                                    <td><?= htmlspecialchars($row['slug'], ENT_QUOTES) ?></td>
+                                    <td>
+                                        <?php
+                                        $category = getCategory($conn, (int)$row['category_id']);
+                                        echo $category ? htmlspecialchars($category['name'], ENT_QUOTES) : 'Uncategorized';
+                                        ?>
+
+                                    </td>
+                                    <td>
+                                        <img width="50" height="50" src="<?= $uploadUrl . htmlspecialchars($row['thumbnail'], ENT_QUOTES) ?>" class="img-fluid rounded">
+                                    </td>
+
+
                                     <td class="d-flex gap-2">
                                         <a class="btn btn-success" href="edit.php?id=<?= $row['id'] ?>">Edit</a>
 

@@ -3,6 +3,11 @@ require "../../filters/authFilter.php";
 require "../../config/connect_db.php";
 require "../../dao/category_functions.php";
 require "../../dao/post_functions.php";
+$uploadDir = __DIR__ . "/../media/uploads/";
+$uploadUrl = "/learnphp/blogpost/admin/media/uploads/";
+
+$files = glob($uploadDir . "*");
+$files = $files ?: []; // if false, make empty array
 
 $postId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $categories = getCategories($conn);
@@ -124,18 +129,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <div class="mb-3">
                         <label>Thumbnail</label>
-                        <input type="text" name="thumbnail" class="form-control"
-                            value="<?= htmlspecialchars($post['thumbnail']) ?>">
+                        <div class="d-flex gap-2">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-secondary flex-shrink-0" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Set Thumbnail
+                            </button>
+                            <input type="text" name="thumbnail" id="thumbnail" class="form-control"
+                                value="<?= htmlspecialchars($post['thumbnail']) ?>">
+
+                        </div>
                     </div>
+
 
                     <button class="btn btn-primary">Update Post</button>
                 </form>
+                <!-- Start Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">All Media Files</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <?php if (empty($files)): ?>
+                                    <div class="col-12">
+                                        <div class="alert alert-warning text-center">
+                                            No files found
+                                        </div>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-6 g-4 mb-4">
+                                        <?php foreach ($files as $file):
+                                            $fileName = basename($file);
+                                        ?>
+                                            <div class="col">
+                                                <a href="#" data-bs-dismiss="modal" onclick="setThumbnail('<?= $fileName ?>')">
+                                                    <img src="<?= $uploadUrl . $fileName ?>" class="img-fluid rounded">
+                                                </a>
+                                            </div>
+
+                                        <?php endforeach; ?>
+                                    </div>
+
+                                <?php endif; ?>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Select</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal -->
 
             </div>
         </div>
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script>
+        function setThumbnail(name) {
+            $("#thumbnail").val(name);
+        }
+    </script>
 </body>
 
 </html>
