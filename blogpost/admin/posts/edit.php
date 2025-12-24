@@ -60,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Post Details</title>
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/47.3.0/ckeditor5.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 
@@ -124,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <div class="mb-3">
                         <label>Content</label>
-                        <textarea name="content" class="form-control"><?= htmlspecialchars($post['content']) ?></textarea>
+                        <textarea id="editor" name="content" class="form-control"><?= htmlspecialchars($post['content']) ?></textarea>
                     </div>
 
                     <div class="mb-3">
@@ -189,10 +190,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/47.3.0/ckeditor5.umd.js"></script>
+
     <script>
         function setThumbnail(name) {
             $("#thumbnail").val(name);
         }
+
+        $(document).ready(() => {
+            const {
+                ClassicEditor,
+                Essentials,
+                Bold,
+                Italic,
+                Font,
+                Paragraph
+            } = CKEDITOR;
+
+            ClassicEditor
+                .create($('#editor')[0], {
+                    licenseKey: 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3OTgxNTY3OTksImp0aSI6ImQxMDNjZjVhLTc2NWUtNDlmNC04YjQ0LTFmNWJmNDY4MGViNyIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiXSwiZmVhdHVyZXMiOlsiRFJVUCIsIkUyUCIsIkUyVyJdLCJyZW1vdmVGZWF0dXJlcyI6WyJQQiIsIlJGIiwiU0NIIiwiVENQIiwiVEwiLCJUQ1IiLCJJUiIsIlNVQSIsIkI2NEEiLCJMUCIsIkhFIiwiUkVEIiwiUEZPIiwiV0MiLCJGQVIiLCJCS00iLCJGUEgiLCJNUkUiXSwidmMiOiI4NjIzNDQ5OCJ9.-fj15u89nv2xg19FYHGvzhUa7nvLYUtuPo9YHISdvQhMvcGLNdp99vNjO6Ppwkdl-6K3klB6CfEvizse9zgGrQ',
+                    plugins: [Essentials, Paragraph, Bold, Italic, Font],
+                    toolbar: [
+                        'undo', 'redo', '|', 'bold', 'italic', '|',
+                        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'paragraph'
+                    ]
+                })
+                .then(editor => {
+                    // Editor initialized successfully.
+                    console.log('CKEditor 5 initialized with jQuery!');
+                })
+                .catch(error => {
+                    console.error('Error initializing CKEditor 5:', error);
+                });
+        });
     </script>
 </body>
 

@@ -5,7 +5,7 @@ require "dao/post_functions.php";
 require "utils/functions.php";
 
 $uploadUrl = "/learnphp/blogpost/admin/media/uploads/";
-$posts = getRecentPosts($conn, 1);
+$posts = getRecentPosts($conn, 2);
 
 ?>
 <!doctype html>
@@ -35,7 +35,7 @@ $posts = getRecentPosts($conn, 1);
                                 <a class="text-decoration-none" href="single.php?id=<?= $post['id'] ?>"><img width="200" src="<?= $uploadUrl . $post['thumbnail'] ?>"></a>
                                 <div class="card-body">
                                     <h2><a class="text-decoration-none" href="single.php?id=<?= $post['id'] ?>"><?= $post['title'] ?></a></h2>
-                                    <p><?= getExcerpt($post['content'], 10) ?></p>
+                                    <p><?= getExcerpt($post['content'], 15) ?></p>
                                 </div>
                             </div>
                         </div>
