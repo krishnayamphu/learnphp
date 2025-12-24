@@ -14,6 +14,36 @@ function getPosts(mysqli $conn): array
     return $posts;
 }
 
+function getRecentPosts(mysqli $conn, int $limit): array
+{
+    $sql = "SELECT * FROM posts ORDER BY id DESC LIMIT $limit";
+    $result = mysqli_query($conn, $sql);
+
+    $posts = [];
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $posts[] = $row;
+        }
+    }
+    return $posts;
+}
+
+function getPostsByCategory(mysqli $conn, int $categoryId): array
+{
+    $sql = "SELECT * FROM posts WHERE category_id = $categoryId";
+    $result = mysqli_query($conn, $sql);
+
+    $posts = [];
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $posts[] = $row;
+        }
+    }
+    return $posts;
+}
+
 function getPost(mysqli $conn, int $id): ?array
 {
     $sql = "SELECT * FROM posts WHERE id = $id LIMIT 1";

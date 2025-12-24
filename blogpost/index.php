@@ -2,8 +2,10 @@
 require "config/connect_db.php";
 require "dao/category_functions.php";
 require "dao/post_functions.php";
+require "utils/functions.php";
+
 $uploadUrl = "/learnphp/blogpost/admin/media/uploads/";
-$posts = getPosts($conn);
+$posts = getRecentPosts($conn, 1);
 
 ?>
 <!doctype html>
@@ -12,41 +14,12 @@ $posts = getPosts($conn);
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Media Files</title>
+    <title>Home - Blogpost</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 
 <body>
-
-    <header>
-        <nav class="navbar  navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark">
-
-            <div class="container">
-                <a class="navbar-brand" href="#">Blogpost</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Lifestyle</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Technology</a>
-                        </li>
-                    </ul>
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                        <button class="btn btn-outline-secondary" type="submit">Search</button>
-                    </form>
-                </div>
-            </div>
-        </nav>
-    </header>
-
+    <?php include 'header.php'; ?>
     <main>
         <div class="container">
             <?php if (count($posts) === 0) : ?>
@@ -59,9 +32,11 @@ $posts = getPosts($conn);
                     <?php foreach ($posts as $post): ?>
                         <div class="card">
                             <div class="d-flex gap-4">
-                                <a href="single.php?id=<?= $post['id'] ?>"><img width="200" src="<?= $uploadUrl . $post['thumbnail'] ?>"></a>
-                                <h2><a href="single.php?id=<?= $post['id'] ?>"><?= $post['title'] ?></a></h2>
-                                <!-- <p><?= $post['content'] ?></p> -->
+                                <a class="text-decoration-none" href="single.php?id=<?= $post['id'] ?>"><img width="200" src="<?= $uploadUrl . $post['thumbnail'] ?>"></a>
+                                <div class="card-body">
+                                    <h2><a class="text-decoration-none" href="single.php?id=<?= $post['id'] ?>"><?= $post['title'] ?></a></h2>
+                                    <p><?= getExcerpt($post['content'], 10) ?></p>
+                                </div>
                             </div>
                         </div>
 

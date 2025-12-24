@@ -2,10 +2,12 @@
 require "config/connect_db.php";
 require "dao/category_functions.php";
 require "dao/post_functions.php";
+require "utils/functions.php";
+
 $uploadUrl = "/learnphp/blogpost/admin/media/uploads/";
-$postId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
-$categories = getCategories($conn);
-$post = getPost($conn, $postId);
+$name = isset($_GET['name']) ? $_GET['name'] : '';
+$category = getCategoryByName($conn, $name);
+$posts = getPostsByCategory($conn, $category['id']);
 ?>
 <!doctype html>
 <html lang="en">
@@ -13,7 +15,7 @@ $post = getPost($conn, $postId);
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Blogpost - <?= $post['title'] ?></title>
+    <title>Blogpost - <?= $category['name'] ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 
@@ -21,22 +23,30 @@ $post = getPost($conn, $postId);
     <?php include 'header.php'; ?>
     <main>
         <div class="container">
-            <?php if (!$post) : ?>
+            <?php if (count($posts) === 0) : ?>
                 <div class="alert alert-info mt-4">
                     No posts found.
                 </div>
 
             <?php else : ?>
-                <div class="card my-5 py-5 px-3">
-                    <div class="d-flex flex-column gap-4">
-                        <img class="w-100" src="<?= $uploadUrl . $post['thumbnail'] ?>">
-                        <h1><?= $post['title'] ?></h1>
-                        <h6>Published on <?= date("M d, Y H:i", strtotime($post['created_at'])) ?></h6>
-                        <p><?= $post['content'] ?></p>
-                    </div>
+                <div class="d-flex flex-column gap-4 mt-4">
+                    <?php foreach ($posts as $post): ?>
+                        <div class="card">
+                            <div class="d-flex gap-4">
+                                <a class="text-decoration-none" href="single.php?id=<?= $post['id'] ?>"><img width="200" src="<?= $uploadUrl . $post['thumbnail'] ?>"></a>
+                                <div class="card-body">
+                                    <h2><a class="text-decoration-none" href="single.php?id=<?= $post['id'] ?>"><?= $post['title'] ?></a></h2>
+                                    <p><?= getExcerpt($post['content'], 10) ?></p>
+                                </div>
+                            </div>
+                        </div>
+
+                    <?php endforeach; ?>
                 </div>
             <?php endif; ?>
+
         </div>
+
     </main>
 
     <?php mysqli_close($conn) ?>
