@@ -1,13 +1,20 @@
-<?php require "header.php" ?>
+<?php
+$category = get_queried_object();
+$category_id = $category->term_id;
+// var_dump($category);
+require "header.php"
+
+
+?>
 <main>
     <div class="container">
-        <h1>Homepage</h1>
+        <h1><?= $category->name ?></h1>
 
         <hr>
 
         <?php
         $args = array(
-            'numberposts' => 5,    // Number of posts to retrieve (-1 for all)
+            'category'         => $category->cat_ID,
             'orderby'     => 'date', // Order by date
             'order'       => 'DESC', // Descending order
             'post_type'   => 'post', // Can be 'page', 'custom_type', etc.
