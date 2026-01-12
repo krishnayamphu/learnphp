@@ -2,27 +2,23 @@
 <main>
     <div class="container">
         <h1>Homepage</h1>
-
         <hr>
-
-        <?php
-        $args = array(
-            'numberposts' => 5,    // Number of posts to retrieve (-1 for all)
-            'orderby'     => 'date', // Order by date
-            'order'       => 'DESC', // Descending order
-            'post_type'   => 'post', // Can be 'page', 'custom_type', etc.
-            'post_status' => 'publish' // Post status
-        );
-
-        $posts_array = get_posts($args);
-
-        foreach ($posts_array as $post) : setup_postdata($post); ?>
-            <h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
-            <p><?php the_excerpt(); ?></p>
-        <?php endforeach;
-
-        wp_reset_postdata(); // Important: resets the post data to the original query
-        ?>
+        <div class="row">
+            <?php
+            $posts = getPostsByCategorySlug('economy', 2, 0);
+            if ($posts->have_posts()) :
+                while ($posts->have_posts()) : $posts->the_post();
+            ?>
+                    <h2 class="py-4">
+                        <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                    </h2>
+                    <p class="mb-4"> <?php echo custom_excerpt(25, "...") ?> </p>
+            <?php endwhile;
+                wp_reset_postdata();
+            else :
+                _e('Sorry, no posts were found.', 'wptheme');
+            endif; ?>
+        </div>
     </div>
 </main>
 <?php require "footer.php" ?>
