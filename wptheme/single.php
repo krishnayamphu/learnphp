@@ -20,7 +20,7 @@
                     <!-- Featured Image -->
                     <?php if (has_post_thumbnail()) : ?>
                         <div class="post-thumbnail mb-4">
-                            <?php the_post_thumbnail('large', ['class' => 'img-fluid rounded']); ?>
+                            <?php the_post_thumbnail('large', ['class' => 'img-fluid w-100 rounded']); ?>
                         </div>
                     <?php endif; ?>
 

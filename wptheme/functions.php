@@ -22,7 +22,7 @@ function wptheme_setup()
     ));
 
     // Add theme support
-    // add_theme_support('post-thumbnails');
+    add_theme_support('post-thumbnails');
 
     // Add custom image sizes
     // add_image_size('wptheme-featured', 1200, 630, true);
