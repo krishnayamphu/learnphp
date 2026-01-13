@@ -11,16 +11,21 @@ $total_results = $wp_query->found_posts;
         </div>
         <div class="row">
             <div class="col-md-8">
-                <?php
-                if (have_posts()) {
-                    // Start the loop.
-                    while (have_posts()) : the_post();
-                        get_template_part('template-parts/content/content-search', get_post_format());
-                    endwhile;
-                } else {
-                    echo 'no result found';
-                }
-                ?>
+                <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+                    <?php
+                    if (have_posts()) {
+                        // Start the loop.
+                        while (have_posts()) : the_post(); ?>
+                            <div class="col">
+                                <?php get_template_part('template-parts/content/content-search', get_post_format()); ?>
+                            </div>
+                    <?php endwhile;
+                    } else {
+                        echo 'no result found';
+                    }
+                    ?>
+                </div>
+
             </div>
             <div class="col-md-4">
                 <?php get_sidebar(); ?>

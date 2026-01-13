@@ -10,6 +10,7 @@ $sidebar_query = new WP_Query($sidebar_args);
 ?>
 
 <?php if ($sidebar_query->have_posts()) : ?>
+    <h4>Recent Posts</h4>
     <ul class="sidebar-posts-list">
         <?php while ($sidebar_query->have_posts()) : $sidebar_query->the_post(); ?>
             <li class="sidebar-post-item">

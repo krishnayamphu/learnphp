@@ -1,5 +1,6 @@
 .menu {
   display: flex;
+  flex-direction: column;
   list-style: none;
   background-color: aquamarine;
   justify-content: center;
@@ -14,4 +15,8 @@
   width: 300px !important;
   height: 300px !important;
   object-fit: cover;
+}
+
+footer {
+  background-color: #148be0;
 }
