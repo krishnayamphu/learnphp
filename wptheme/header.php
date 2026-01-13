@@ -8,7 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
     <link href="<?php echo get_template_directory_uri() . '/css/app.css'; ?>" rel="stylesheet">
-
+    <?php //wp_head(); 
+    ?>
 </head>
 
 <body>

@@ -25,6 +25,21 @@ function wptheme_setup()
     add_theme_support('post-thumbnails');
 
     // Add custom image sizes
-    // add_image_size('wptheme-featured', 1200, 630, true);
-    // add_image_size('wptheme-thumbnail', 300, 200, true);
+    add_image_size('wptheme-featured', 1200, 630, true);
+    add_image_size('wptheme-thumbnail', 300, 200, true);
+}
+
+add_action('widgets_init', 'wptheme_widgets_init');
+
+function wptheme_widgets_init()
+{
+    register_sidebar(array(
+        'name'          => __('Sidebar Widget Area', 'wptheme'),
+        'id'            => 'sidebar-1',
+        'description'   => __('Add widgets here to appear in your sidebar.', 'wptheme'),
+        'before_widget' => '<section id="%1$s" class="widget %2$s">',
+        'after_widget'  => '</section>',
+        'before_title'  => '<h2 class="widget-title">',
+        'after_title'   => '</h2>',
+    ));
 }
